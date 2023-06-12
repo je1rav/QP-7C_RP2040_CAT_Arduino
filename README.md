@@ -15,7 +15,7 @@
 このため， ”QP-7C（CRkits共同購入プロジェクト）の改造 III”　https://github.com/je1rav/QP-7C_RP2040_CAT/ では，tinyusbをフルセットで使用できるpico-sdk上で開発し，一応作動するようになりました．  
 Mbed coreのWindowsで動作しないファームウエアと，tinyusbを使ったWindowsで動作するファームウエアの，挙動の違いを”usbview.exe”を使って観察したところ，動作しないファームウエアにはUSBAudio用の”IAD descriptor”の記述が無いことが分かりました．  
 
-この解消のため，Arduino Mbed OS上で，USB AudioとUSB Seralの同時使用を可能にする”PluggableUSBAudio.h”と”USBAudio.cpp”を少し修正してみると,
+この解消のため，Arduino Mbed OS上でUSB AudioとUSB Seralの同時使用を可能にする”PluggableUSBAudio.h”と”USBAudio.cpp”を少し修正してみると,
 Windowsがデバイスを認識し，デバイスマネジャーにUSBSerialとUSBAudioが使用可能な状態で現れるようになりました．  
 （”PluggableUSBAudio.h”と”USBAudio.cpp”はオリジナルのものから少し変更しています．）
 
