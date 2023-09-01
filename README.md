@@ -29,7 +29,7 @@ WSJT-Xと共に使用する場合しか検証していませんが，今回の�
 
 シリアルポートには新しい”USBシリアルデバイス”が現れますが，そのままではwindows上ではWSJT-XでのCATコントロールが動きませんでした．  
 MacOS上では，問題なくWSJT-XでのCATコントロールが可能でした．  
-#### WSJT-Xでの設定(追加(2023/9/1) from Issues #1; Tnx. Maurice Marks)  
+#### WSJT-Xでの設定(追加(2023/9/1) from Issue #1; Tnx. Maurice Marks)  
 	WSJT-Xの無線機設定(R)で，ハンドシェイクを「なし(N)」にし，制御信号を強制設定「DTR:High，　RTS:High」に設定するとCATコントロールが作動します．  
  	この設定を行つと，以下の2つの対策は不要です．  
 #### Windows上でのCAT制御法 1
@@ -83,4 +83,4 @@ WINDOWSのArduino IDEの1.8.19のインストーラ版では,
 
 ### 追加（WSJT-XのCAT設定法）(2023/9/1)
 WSJT-Xの無線機設定(R)で，ハンドシェイクを「なし(N)」にし，制御信号を強制設定「DTR: High， RTS: High」に設定するとCATコントロールが作動します．　 
-(Issues #1; Tnx. Maurice Marks)
+(Issue #1; Tnx. Maurice Marks)
