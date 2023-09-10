@@ -318,7 +318,7 @@ void freqChange(){
 }
 
 int16_t adc() {
-  int16_t adc = 0;
+  int32_t adc = 0;
   for (int i=0;i<24;i++){                    // 192kHz/24 = 8kHz
   #ifdef Superheterodyne
     adc += adc_fifo_get_blocking() -1862 ;   // read from ADC fifo (offset about 1.5 V: DET OUT)
@@ -326,7 +326,8 @@ int16_t adc() {
     adc += adc_fifo_get_blocking() -745 ;    // read from ADC fifo (offset about 0.6 V: AM MIX OUT)
   #endif
   }  
-  return adc;
+  int16_t devision = 1;
+  return (int16_t)(adc/devision);    // if the audio input is too large, please reduce the adc output with increasing the "devision".
 }
 
 void USBAudioRead() {
