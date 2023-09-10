@@ -326,8 +326,8 @@ int16_t adc() {
     adc += adc_fifo_get_blocking() -745 ;    // read from ADC fifo (offset about 0.6 V: AM MIX OUT)
   #endif
   }  
-  int16_t devision = 1;
-  return (int16_t)(adc/devision);    // if the audio input is too large, please reduce the adc output with increasing the "devision".
+  int16_t division = 1;
+  return (int16_t)(adc/division);    // if the audio input is too large, please reduce the adc output with increasing the "division".
 }
 
 void USBAudioRead() {
