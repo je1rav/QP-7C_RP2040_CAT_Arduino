@@ -82,5 +82,6 @@ WINDOWSのArduino IDEの1.8.19のインストーラ版では,
 ファイルを書き換えた後は，Arduino IDEを再立ち上げして，ファイルの変更が確実に有効になってからコンパイルすると良いでしょう．   
 
 ### 追加（WSJT-XのCAT設定法）(2023/9/1)
-WSJT-Xの無線機設定(R)で，ハンドシェイクを「なし(N)」にし，制御信号を強制設定「DTR: High， RTS: High」に設定するとCATコントロールが作動します．　 
-(Issue #1; Tnx. Maurice Marks)
+WSJT-Xの無線機設定(R)で，ハンドシェイクを「なし(N)」にし，制御信号を強制設定「DTR: High， RTS: High」に設定するとCATコントロールが作動します．
+(Issue #1; Tnx. Maurice Marks)   
+ちなみに，PTTの設定は「VOX」にしておいて下さい．   
