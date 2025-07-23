@@ -85,3 +85,53 @@ WINDOWSのArduino IDEの1.8.19のインストーラ版では,
 WSJT-Xの無線機設定(R)で，ハンドシェイクを「なし(N)」にし，制御信号を強制設定「DTR: High， RTS: High」に設定するとCATコントロールが作動します．
 (Issue #1; Tnx. Maurice Marks)   
 ちなみに，PTTの設定は「VOX」にしておいて下さい．   
+
+
+## 追加 II （ファームウエア： Arduino-pico (earlephilhower)版の追加）(2025/7/23)
+これまでのプログラムはpico用ボードマネジャー”Arduino Mbed OS RP2040 Boards”で開発してきました．   
+現時点でRp2040のArdiunoボードマネジャーとしては，earlephilhower氏版の方がメジャーになっていますが，
+このボードマネジャーでUSBを簡単に使用するためのライブラリーAdafruit_tinyUSB_Arduinoが，USB Audioをサポートしていないため，使用できませんでした．   
+しかし，昨年pschatzmann氏がAdafruit_tinyUSB_ArduinoでUSB Audioを使用できるように拡張しています．   
+https://github.com/pschatzmann/Adafruit_TinyUSB_Arduino/tree/Audio   
+そこで，このライブラリーを使用したファームウエアを作成してみました．   
+
+earlephilhower氏のボードマネージャー(Raspberry Pi Pico/RO2040/RP2350)を使用し，pschatzmann氏のライブラリーをインストールしてコンパイルすれば使えます．   
+earlephilhower氏のボードマネージャーには予めAdafruit tinyUSBが含まれていますが，後でpschatzmann氏のライブラリーをzipファイルからインストールすると，こちらが優先的に使用されます．   
+コンパイルする時にUSBスタックとして”Adafruit tinyUSB”を選択するのを忘れずにして下さい．   
+earlephilhower氏のボードマネージャー用のファームウエアはQP_7C_RP2040_earlephilhower.inoです．   
+
+Adafruit_tinyUSB_ArduinoでのUSB Audioのサポートがまだ不完全なのか，あるいは私のプログラムの書き方が悪いのか，PCからの送信用音声データが結構歪んでしまっています(いわゆるbit-crushedノイズ，2025年7月現在)．   
+従来のファームウエアのままではデコードできる信号にならなかったため，FT8の送信周波数決定ルーチンを一部変更し，この歪み対策を行いました．   
+これまでのファームウエアでは5mS毎に送信周波数を変更し，基本的にこの間のすべての音声信号データを使用して平均周波数を算出していました．   
+今回は10mS間データを収集し，その間の音声信号について決定した周波数のうちの中央値の近くの1/3個だけを使用するようにしました．   
+こうすることで，歪みが起こっていないと思われる部分のみを使用するようになっています．   
+そのため，送信可能音声周波数幅が若干減少し，300Hz〜3kHzになっています．   
+一応，動いてはいるようなのですが，あまり気持ちのいい話ではありませんので，改良の可能性があればご指摘ください．   
+また，環境が異なるとうまく作動しないかも知れません．   
+
+pschatzmann氏のライブラリーはマイクロフォン（入力）あるいはスピーカー（出力）を単独で使用する場合には，linux，macos, windows, androidの全てのosで認識してUSB Audioデバイスとして使用できます．   
+しかし，ヘッドセットとして入出力を同時使用しようとすると，windowsではUSBデバイスエラーが出て使用できません(windows以外では問題ない．2025年7月現在)．   
+これは，ライブラリーのAdafruit_TinyUSB_Library/src/arduino/audio/Adafruit_USBD_Audio.cppファイルの一部を少し変更することで一応対応出来そうでした．   
+468行目の// Setup endpints and interfaces以下の部分です．   
+ if (isHeadset() && _desc_len==0) {　   
+    _itfnum_mic = TinyUSBDevice.allocInterface(); // input interface　   
+    _itfnum_spk = TinyUSBDevice.allocInterface(); // output interface　   
+    _ep_mic = TinyUSBDevice.allocEndpoint(TUSB_DIR_IN); // input　   
+    _ep_int = TinyUSBDevice.allocEndpoint(TUSB_DIR_IN); // input　   
+    _ep_spk = TinyUSBDevice.allocEndpoint(TUSB_DIR_OUT); // output　   
+ を以下のように順序をスピーカーからマイクの順に変更し，_ep_int=の分をコメントアウトしました．   
+  if (isHeadset() && _desc_len==0) {　   
+    _itfnum_spk = TinyUSBDevice.allocInterface(); // output interface　   
+    _ep_spk = TinyUSBDevice.allocEndpoint(TUSB_DIR_OUT); // output　   
+    //_ep_int = TinyUSBDevice.allocEndpoint(TUSB_DIR_IN); // input　   
+    _itfnum_mic = TinyUSBDevice.allocInterface(); // input interface　   
+   _ep_mic = TinyUSBDevice.allocEndpoint(TUSB_DIR_IN); // input　   
+Windowsの場合には，この文の後に記述されている具体的な説明の記述の順序と，ここでの指定の順序が一致しないと認識しないようです．   
+一方，他のOSは並び順には寛容で自動的に処理してくれるようです．   
+スピーカー用の入力エンドポイントの指定”_ep_int”を行うとWindows(10や11)では，デバイスを正しく起動できませんでした．   
+理由はよく分からないのですが，コメントアウトするとWindowsで認識し，一応動いているようです．   
+他のOSでも，この部分をコメントアウトしても変わりなく動いているようです．   
+しかし，私はこの部分の動作についてよく分かっていないので．コメントアウトすることによる不具合については分かりません．   
+WindowsでWSJT-Xを使用する場合，無線機設定(R)で，ハンドシェイクを「なし(N)」にし，制御信号を強制設定「DTR: High， RTS: High」に設定するとCATコントロールが作動します．   
+何回か「CATをテスト」を行わないと動かない場合もあるようです．   
+ちなみに，PTTの設定は「VOX」にしておいて下さい．   
