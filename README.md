@@ -119,7 +119,7 @@ pschatzmann氏のライブラリーはマイクロフォン（入力）あるい
     _ep_mic = TinyUSBDevice.allocEndpoint(TUSB_DIR_IN); // input　   
     _ep_int = TinyUSBDevice.allocEndpoint(TUSB_DIR_IN); // input　   
     _ep_spk = TinyUSBDevice.allocEndpoint(TUSB_DIR_OUT); // output　   
- を以下のように順序をスピーカーからマイクの順に変更し，_ep_int=の分をコメントアウトしました．   
+ を以下のように順序をスピーカーからマイクの順に変更し，_ep_int=の行をコメントアウトしました．   
   if (isHeadset() && _desc_len==0) {　   
     _itfnum_spk = TinyUSBDevice.allocInterface(); // output interface　   
     _ep_spk = TinyUSBDevice.allocEndpoint(TUSB_DIR_OUT); // output　   
